@@ -1,11 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_cco2/models/user_model.dart';
 import 'package:firebase_cco2/services/authentication_service.dart';
 import 'package:firebase_cco2/screens/home.dart';
 import 'package:firebase_cco2/screens/sign_in.dart';
+import 'package:firebase_cco2/services/shared_prefs_service.dart';
+import 'package:firebase_cco2/ui/shared/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'helpers/helper.dart';
 
 //VERIFICAR SE O EMAIL EXIST
 
@@ -30,10 +34,11 @@ class MyApp extends StatelessWidget {
                   context.read<AuthenticationService>().authStateChanges)
         ],
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
+              primarySwatch: createMaterialColor(mainColor),
+              fontFamily: 'Montserrat'),
           home: AuthenticationWrapper(),
         ));
   }

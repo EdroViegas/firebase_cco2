@@ -1,5 +1,6 @@
 import 'package:firebase_cco2/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_cco2/services/shared_prefs_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_cco2/services/firestore_service.dart';
 
@@ -8,6 +9,7 @@ class AuthenticationService {
   AuthenticationService(this._firebaseAuth);
 
   final FirestoreService _firestoreService = FirestoreService();
+  SharedPref sharedPref = SharedPref();
 
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
 
@@ -34,12 +36,14 @@ class AuthenticationService {
     }
   }
 
-  Future signUpWithEmail({
-    @required String email,
-    @required String password,
-    @required String fullName,
-    @required String role,
-  }) async {
+  Future signUpWithEmail(
+      {@required String fullName,
+      @required String address,
+      @required String email,
+      @required String phone,
+      @required String altPhone,
+      @required String userRole,
+      @required String password}) async {
     try {
       var authResult = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -47,11 +51,15 @@ class AuthenticationService {
       );
 
       // create a new user profile on firestore
+      //ACRESCENTAR MAIS CAMPOS
       _currentUser = UserModel(
         id: authResult.user.uid,
-        email: email,
         fullName: fullName,
-        userRole: role,
+        address: address,
+        email: email,
+        phone: phone,
+        altPhone: altPhone,
+        userRole: userRole,
       );
 
       await _firestoreService.createUser(_currentUser);
@@ -71,6 +79,7 @@ class AuthenticationService {
   Future _populateCurrentUser(User user) async {
     if (user != null) {
       _currentUser = await _firestoreService.getUser(user.uid);
+      sharedPref.save('user', _currentUser.toJson());
     }
   }
 }
