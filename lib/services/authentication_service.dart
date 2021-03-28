@@ -18,20 +18,57 @@ class AuthenticationService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+    sharedPref.remove('user');
+  }
+
+  isVerifiedUser() {
+    return _firebaseAuth.currentUser.emailVerified;
+  }
+
+  Future reloadUser() async {
+    await _firebaseAuth.currentUser.reload();
   }
 
   Future loginWithEmail({
     @required String email,
     @required String password,
   }) async {
+    String errorMessage;
     try {
       var authResult = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       await _populateCurrentUser(authResult.user);
+      if (!isVerifiedUser()) authResult.user.sendEmailVerification();
       return authResult.user != null;
     } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "ERROR_INVALID_EMAIL":
+          errorMessage = "Your email address appears to be malformed.";
+          break;
+        case "ERROR_WRONG_PASSWORD":
+          errorMessage = "Your password is wrong.";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          errorMessage = "User with this email doesn't exist.";
+          break;
+        case "ERROR_USER_DISABLED":
+          errorMessage = "User with this email has been disabled.";
+          break;
+        case "ERROR_TOO_MANY_REQUESTS":
+          errorMessage = "Too many requests. Try again later.";
+          break;
+        case "ERROR_OPERATION_NOT_ALLOWED":
+          errorMessage = "Signing in with Email and Password is not enabled.";
+          break;
+        default:
+          errorMessage = "An undefined Error happened.";
+      }
+      if (errorMessage != null) {
+        return Future.error(errorMessage);
+      }
+
       return e.message;
     }
   }
@@ -78,8 +115,14 @@ class AuthenticationService {
 
   Future _populateCurrentUser(User user) async {
     if (user != null) {
+      bool isVerified = isVerifiedUser();
+
       _currentUser = await _firestoreService.getUser(user.uid);
-      sharedPref.save('user', _currentUser.toJson());
+      Map<String, dynamic> userData = _currentUser.toJson();
+
+      userData.putIfAbsent('verified', () => isVerified ? '1' : '0');
+
+      sharedPref.save('user', userData);
     }
   }
 }

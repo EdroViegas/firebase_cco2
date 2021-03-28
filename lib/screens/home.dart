@@ -1,10 +1,12 @@
 import 'package:firebase_cco2/cards/user_card.dart';
+import 'package:firebase_cco2/helpers/dialogues.dart';
 import 'package:firebase_cco2/models/user_model.dart';
 import 'package:firebase_cco2/screens/add_case.dart';
 import 'package:firebase_cco2/screens/cases.dart';
 import 'package:firebase_cco2/services/authentication_service.dart';
 import 'package:firebase_cco2/services/shared_prefs_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,6 +26,10 @@ class _HomeState extends State<Home> {
   loadSharedPrefs() async {
     SharedPref sharedPref = SharedPref();
     try {
+      print('\n\n\n');
+      print(await sharedPref.read("user"));
+      print('\n\n\n');
+
       UserModel user = UserModel.fromData(await sharedPref.read("user"));
       //print(user.toJson());
       return user;
@@ -35,6 +41,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    bool isVerified = context.read<AuthenticationService>().isVerifiedUser();
+
     return Scaffold(
       backgroundColor: secondColor,
       appBar: AppBar(
@@ -54,6 +62,33 @@ class _HomeState extends State<Home> {
         child: Container(
           child: Column(
             children: [
+              isVerified
+                  ? Container()
+                  : TextButton.icon(
+                      onPressed: () {
+                        context.read<AuthenticationService>().reloadUser();
+                        setState(() {
+                          isVerified = context
+                              .read<AuthenticationService>()
+                              .isVerifiedUser();
+                          if (isVerified)
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: mainColor,
+                                content:
+                                    Text('E-mail verificado com sucesso')));
+                          else
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: mainColor,
+                                content: Text('E-mail não verificado')));
+                        });
+                      },
+                      style:
+                          TextButton.styleFrom(backgroundColor: Colors.white),
+                      icon: FaIcon(FontAwesomeIcons.checkCircle),
+                      label: Text(
+                        "Confirme o seu e-mail ...",
+                        style: TextStyle(color: Colors.red),
+                      )),
               Container(
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: 350,
@@ -80,14 +115,18 @@ class _HomeState extends State<Home> {
                         } else if (snapshot.hasData) {
                           // Extracting data from snapshot object
                           final user = snapshot.data as UserModel;
-                          print("ADDRESS DATA IS : ${user.address}");
-                          return UserCard(
-                              name: user.fullName,
-                              address: user.address,
-                              email: user.email,
-                              phone: user.phone,
-                              altPhone: user.altPhone,
-                              role: user.userRole);
+
+                          return Column(
+                            children: [
+                              UserCard(
+                                  name: user.fullName,
+                                  address: user.address,
+                                  email: user.email,
+                                  phone: user.phone,
+                                  altPhone: user.altPhone,
+                                  role: user.userRole),
+                            ],
+                          );
                         }
                       }
 
@@ -112,10 +151,15 @@ class _HomeState extends State<Home> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) => Cases()));
+                        if (isVerified) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) => Cases()));
+                        } else {
+                          snaCKbar("Confirme o seu e-mail");
+                        }
                       },
                       child: _cardCases(
+                          isVerified: isVerified,
                           title: "CASOS",
                           image: "assets/images/pale-coronavirus.png",
                           icon: FontAwesomeIcons.viruses,
@@ -124,14 +168,30 @@ class _HomeState extends State<Home> {
                     SizedBox(
                       height: 15,
                     ),
-                    _cardCases(
-                        title: "SINTOMÁTICOS",
-                        image: "assets/images/fogg-doctor.png",
-                        icon: FontAwesomeIcons.procedures),
+                    InkWell(
+                      onTap: () {
+                        //fullScreenProcessingDialog(
+                        //  context: context, dismissible: true);
+
+                        registerErrorDialogue(
+                          hasError: false,
+                          isProcessing: false,
+                          isWarning: false,
+                          message: 'Erro ao cadastrar',
+                          context: context,
+                        );
+                      },
+                      child: _cardCases(
+                          isVerified: isVerified,
+                          title: "SINTOMÁTICOS",
+                          image: "assets/images/fogg-doctor.png",
+                          icon: FontAwesomeIcons.procedures),
+                    ),
                     SizedBox(
                       height: 15,
                     ),
                     _cardCases(
+                        isVerified: isVerified,
                         title: "ASSINTOMÁTICOS",
                         image: "assets/images/fogg-pandemic-set.png",
                         icon: FontAwesomeIcons.shieldVirus,
@@ -148,20 +208,31 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (BuildContext context) => AddCase()));
+          if (isVerified) {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => AddCase()));
+          } else {
+            snaCKbar("Confirme o seu e-mail");
+          }
         },
         child: Icon(Icons.add),
       ),
     );
   }
 
-  Widget _cardCases({String title, IconData icon, String image, Color color}) {
+  Widget _cardCases(
+      {String title,
+      IconData icon,
+      String image,
+      Color color,
+      bool isVerified}) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
       height: 80,
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(5)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -196,5 +267,10 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  snaCKbar(String message) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: mainColor, content: Text('$message')));
   }
 }

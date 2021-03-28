@@ -6,6 +6,21 @@ extension StringExtensions on String {
     return newNumber;
   }
 
+  String getInitials() {
+    List<String> names = this.split(" ");
+    String initials = "";
+    int numWords = 2;
+
+    if (numWords < names.length) {
+      numWords = names.length;
+    }
+    for (var i = 0; i < numWords; i++) {
+      initials += '${names[i][0]}';
+    }
+
+    return initials;
+  }
+
   String capitalize() {
     return this;
   }

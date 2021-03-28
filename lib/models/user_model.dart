@@ -5,6 +5,7 @@ class UserModel {
   final String email;
   final String phone;
   final String altPhone;
+  final String verified;
 
   final String userRole;
 
@@ -15,7 +16,8 @@ class UserModel {
       this.userRole,
       this.altPhone,
       this.phone,
-      this.address});
+      this.address,
+      this.verified});
 
   UserModel.fromData(Map<String, dynamic> data)
       : id = (data['id'] != null) ? data['id'] : "",
@@ -24,7 +26,8 @@ class UserModel {
         email = data['email'] ?? "",
         phone = data['phone'] ?? "",
         altPhone = data['alt_phone'] ?? "",
-        userRole = data['userRole'] ?? "";
+        userRole = data['userRole'] ?? "",
+        verified = data['verified'] ?? "";
 
   Map<String, dynamic> toJson() {
     return {
@@ -35,6 +38,7 @@ class UserModel {
       'phone': phone,
       'alt_phone': altPhone,
       'userRole': userRole,
+      'verified': verified
     };
   }
 }

@@ -10,7 +10,7 @@ class SenderRole {
   SenderRole({this.senderID, this.user, this.sentAt});
 
   SenderRole.fromData(Map<String, dynamic> data)
-      : sentAt = data['sentAt'] ?? null,
+      : sentAt = data['sentAt'] ?? Timestamp(0, 0),
         senderID = data['senderID'] ?? "",
         user = UserModel.fromData(data['user'] ?? {}) ?? null;
 

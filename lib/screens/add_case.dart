@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_cco2/helpers/dialogues.dart';
 import 'package:firebase_cco2/models/address.dart';
 import 'package:firebase_cco2/models/case_model.dart';
 import 'package:firebase_cco2/models/case_role.dart';
 import 'package:firebase_cco2/models/creator_role.dart';
+import 'package:firebase_cco2/models/receiver_role.dart';
+import 'package:firebase_cco2/models/sender_role.dart';
 import 'package:firebase_cco2/models/user_model.dart';
+import 'package:firebase_cco2/services/firestore_service.dart';
 import 'package:firebase_cco2/services/shared_prefs_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -164,6 +168,7 @@ class _AddCaseState extends State<AddCase> {
                   ),
                   Divider(),
                   TextFormField(
+                    controller: _nameController,
                     decoration: InputDecoration(
                       labelText: "Nome",
                     ),
@@ -192,6 +197,7 @@ class _AddCaseState extends State<AddCase> {
                     ],
                   ),
                   TextFormField(
+                    controller: _ageController,
                     decoration: InputDecoration(
                       labelText: "Idade",
                     ),
@@ -210,6 +216,7 @@ class _AddCaseState extends State<AddCase> {
                     },
                   ),
                   TextFormField(
+                      controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [
                         MaskedInputFormatter(' ### ### ###'),
@@ -229,6 +236,7 @@ class _AddCaseState extends State<AddCase> {
                         return null;
                       }),
                   TextFormField(
+                      controller: _altPhoneController,
                       decoration: InputDecoration(
                         labelText: "Telfone Alternativo",
                       ),
@@ -344,6 +352,7 @@ class _AddCaseState extends State<AddCase> {
                   ),
                   Divider(),
                   TextFormField(
+                      controller: _provinceController,
                       focusNode: _provinceFocusNode,
                       decoration: InputDecoration(
                         labelText: "Província",
@@ -355,6 +364,7 @@ class _AddCaseState extends State<AddCase> {
                         return null;
                       }),
                   TextFormField(
+                      controller: _countyController,
                       decoration: InputDecoration(
                         labelText: "Município",
                       ),
@@ -365,6 +375,7 @@ class _AddCaseState extends State<AddCase> {
                         return null;
                       }),
                   TextFormField(
+                      controller: _streetController,
                       decoration: InputDecoration(
                         labelText: "Rua",
                       ),
@@ -375,6 +386,7 @@ class _AddCaseState extends State<AddCase> {
                         return null;
                       }),
                   TextFormField(
+                      controller: _referenceController,
                       decoration: InputDecoration(
                         labelText: "Referência",
                       ),
@@ -580,6 +592,7 @@ class _AddCaseState extends State<AddCase> {
                     height: 15,
                   ),
                   TextFormField(
+                      controller: _isolationPlaceController,
                       decoration: InputDecoration(
                         labelText: "Local de isolamento",
                       ),
@@ -637,8 +650,20 @@ class _AddCaseState extends State<AddCase> {
                                 user: user,
                                 creatorID: user.id,
                                 createdAt: currentTimeStamp);
+                            SenderRole senderRole = SenderRole(
+                                user: null,
+                                senderID: "",
+                                sentAt: Timestamp(0, 0));
 
-                            CaseRole role = CaseRole(creatorRole: creator);
+                            ReceiverRole receiverRole = ReceiverRole(
+                                user: null,
+                                receiverID: "",
+                                receivedAt: Timestamp(0, 0));
+
+                            CaseRole role = CaseRole(
+                                creatorRole: creator,
+                                senderRole: senderRole,
+                                receiverRole: receiverRole);
 
                             CaseModel caseModel = CaseModel(
                                 name: name,
@@ -650,15 +675,37 @@ class _AddCaseState extends State<AddCase> {
                                 isolationPlace: isolationPlace,
                                 phone: phone,
                                 altPhone: altPhone,
-                                caseRole: role);
+                                caseRole: role,
+                                symptomatic: isSymptomatic);
 
-                            print(
-                                " \n \n USER DATA: ${caseModel.toJson()} \n \n");
+                            fullScreenProcessingDialog(
+                                context: context, dismissible: false);
 
                             if (_thirdFormKey.currentState.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
 
+                              FirestoreService _firestoreService =
+                                  FirestoreService();
+                              _firestoreService.createCase(caseModel).then((_) {
+                                Navigator.pop(context);
+
+                                registerSucceedDialogue(
+                                  context: context,
+                                  message: 'Registro efectuado com sucesso!',
+                                );
+                              }).catchError((error) {
+                                print("ERROR WHILE WRITING DOCUMENT: $error");
+
+                                registerErrorDialogue(
+                                  hasError: false,
+                                  isProcessing: false,
+                                  isWarning: false,
+                                  message:
+                                      'Não foi possível efectuar o registro!',
+                                  context: context,
+                                );
+                              });
                             }
                           },
                           child: Text(

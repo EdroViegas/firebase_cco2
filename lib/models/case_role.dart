@@ -12,15 +12,15 @@ class CaseRole {
   CaseRole({this.creatorRole, this.receiverRole, this.senderRole});
 
   CaseRole.fromData(Map<String, dynamic> data)
-      : creatorRole = CreatorRole.fromData(data['creator']),
-        senderRole = SenderRole.fromData(data['sender']),
-        receiverRole = ReceiverRole.fromData(data['receiver']) ?? null;
+      : creatorRole = CreatorRole.fromData(data['creator']) ?? {},
+        senderRole = SenderRole.fromData(data['sender']) ?? {},
+        receiverRole = ReceiverRole.fromData(data['receiver']) ?? {};
 
   Map<String, dynamic> toJson() {
     return {
-      'creator': creatorRole?.toJson(),
-      'receiver': receiverRole?.toJson(),
-      'sender': senderRole?.toJson(),
+      'creator': creatorRole?.toJson() ?? {},
+      'receiver': receiverRole?.toJson() ?? {},
+      'sender': senderRole?.toJson() ?? {},
     };
   }
 }
