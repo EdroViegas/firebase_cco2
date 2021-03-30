@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_cco2/models/address.dart';
 import 'package:firebase_cco2/models/case_role.dart';
+import 'package:firebase_cco2/models/user_model.dart';
 
 class CaseModel {
   final String id;
@@ -18,6 +19,7 @@ class CaseModel {
 
   final CaseRole caseRole;
   final GeoPoint geolocation;
+  final UserModel followedby;
 
   CaseModel(
       {this.id,
@@ -32,7 +34,8 @@ class CaseModel {
       this.caseRole,
       this.geolocation,
       this.isActive,
-      this.symptomatic});
+      this.symptomatic,
+      this.followedby});
 
   CaseModel.fromData(Map<String, dynamic> data)
       : id = data['id'] ?? "",
@@ -47,7 +50,8 @@ class CaseModel {
         caseRole = CaseRole.fromData(data['role']),
         geolocation = data['geolocation'],
         isActive = data['isActive'],
-        symptomatic = data['symptomatic'];
+        symptomatic = data['symptomatic'],
+        followedby = UserModel.fromData(data['followedby']) ?? {};
 
   Map<String, dynamic> toJson() {
     return {
@@ -61,7 +65,8 @@ class CaseModel {
       'phone': phone,
       'alt_phone': altPhone,
       'symptomatic': symptomatic,
-      'role': caseRole.toJson()
+      'role': caseRole.toJson(),
+      'followedby': followedby.toJson()
     };
   }
 }

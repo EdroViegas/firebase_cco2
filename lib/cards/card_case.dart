@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_cco2/helpers/dialogues.dart';
 import 'package:firebase_cco2/models/case_model.dart';
 import 'package:firebase_cco2/services/firestore_service.dart';
@@ -11,6 +12,7 @@ class CardCase extends StatelessWidget {
   CardCase({this.caseModel});
 
   FirestoreService _firestoreService = FirestoreService();
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,8 @@ class CardCase extends StatelessWidget {
     String imgGenre = caseModel.genre == "Masculino"
         ? "urban-user-1.png"
         : "urban-user-2.png";
+
+    bool isFollower = _auth.currentUser.uid == caseModel.followedby.id;
 
     return Container(
       margin: EdgeInsets.only(bottom: 10),
@@ -98,8 +102,16 @@ class CardCase extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20))),
                       onPressed: () {
-                        _showMyDialogActive(
-                            context: context, status: activeStatus);
+                        //Permite apenas quem esta  a seguir o caso modificar
+                        if (isFollower) {
+                          _showMyDialogActive(
+                              context: context, status: activeStatus);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: mainColor,
+                              content:
+                                  Text('Não é responsável por esse caso!')));
+                        }
                       },
                       child: Text(
                         "$activeStatus",
@@ -217,8 +229,15 @@ class CardCase extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20))),
                         onPressed: () {
-                          _showMyDialogSymptom(
-                              context: context, status: healthStatus);
+                          if (isFollower) {
+                            _showMyDialogSymptom(
+                                context: context, status: healthStatus);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: mainColor,
+                                content:
+                                    Text('Não é responsável por esse caso!')));
+                          }
                         },
                         child: Text(
                           "$healthStatus",

@@ -668,17 +668,19 @@ class _AddCaseState extends State<AddCase> {
                                 receiverRole: receiverRole);
 
                             CaseModel caseModel = CaseModel(
-                                name: name,
-                                age: age,
-                                genre: genre,
-                                address: address,
-                                isActive: isActive,
-                                activeSince: timeStamp,
-                                isolationPlace: isolationPlace,
-                                phone: phone,
-                                altPhone: altPhone,
-                                caseRole: role,
-                                symptomatic: isSymptomatic);
+                              name: name,
+                              age: age,
+                              genre: genre,
+                              address: address,
+                              isActive: isActive,
+                              activeSince: timeStamp,
+                              isolationPlace: isolationPlace,
+                              phone: phone,
+                              altPhone: altPhone,
+                              caseRole: role,
+                              symptomatic: isSymptomatic,
+                              followedby: user,
+                            );
 
                             fullScreenProcessingDialog(
                                 context: context, dismissible: false);

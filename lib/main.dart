@@ -28,6 +28,9 @@ class MyApp extends StatelessWidget {
           Provider<AuthenticationService>(
             create: (_) => AuthenticationService(FirebaseAuth.instance),
           ),
+          Provider<AuthenticationService>(
+            create: (_) => AuthenticationService(FirebaseAuth.instance),
+          ),
           StreamProvider(
               initialData: null,
               create: (context) =>

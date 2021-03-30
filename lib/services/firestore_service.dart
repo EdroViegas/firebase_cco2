@@ -90,4 +90,20 @@ class FirestoreService {
       return e.toString();
     }
   }
+
+  Stream<QuerySnapshot> getCases() {
+    try {
+      var uid = _firebaseAuth.currentUser.uid;
+      FirebaseFirestore.instance
+          .collection('cases')
+          .where('followedby.id', isEqualTo: uid)
+          .snapshots();
+    } catch (e) {
+      // TODO: Find or create a way to repeat error handling without so much repeated code
+      if (e is PlatformException) {
+        print(e.message);
+        return null;
+      }
+    }
+  }
 }
