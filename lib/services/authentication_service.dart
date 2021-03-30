@@ -18,7 +18,7 @@ class AuthenticationService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    sharedPref.remove('user');
+    //sharedPref.remove('user');`
   }
 
   isVerifiedUser() {

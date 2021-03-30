@@ -3,6 +3,7 @@ import 'package:firebase_cco2/models/address.dart';
 import 'package:firebase_cco2/models/case_role.dart';
 
 class CaseModel {
+  final String id;
   final String name;
   final String age;
   final String genre;
@@ -19,7 +20,8 @@ class CaseModel {
   final GeoPoint geolocation;
 
   CaseModel(
-      {this.name,
+      {this.id,
+      this.name,
       this.age,
       this.genre,
       this.address,
@@ -32,8 +34,9 @@ class CaseModel {
       this.isActive,
       this.symptomatic});
 
-  CaseModel.fromData(Map<String, dynamic> data, CaseRole caseRole)
-      : name = data['name'] ?? "",
+  CaseModel.fromData(Map<String, dynamic> data)
+      : id = data['id'] ?? "",
+        name = data['name'] ?? "",
         age = data['age'] ?? "",
         genre = data['genre'] ?? "",
         address = Address.fromData(data['address']),
@@ -41,7 +44,7 @@ class CaseModel {
         activeSince = data['activeSince'] as Timestamp,
         phone = data['phone'] ?? "",
         altPhone = data['alt_phone'] ?? "",
-        caseRole = caseRole,
+        caseRole = CaseRole.fromData(data['role']),
         geolocation = data['geolocation'],
         isActive = data['isActive'],
         symptomatic = data['symptomatic'];

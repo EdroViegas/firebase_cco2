@@ -81,6 +81,9 @@ class _UserCardState extends State<UserCard> {
                   fontSize: 15),
             ),
           ),
+          SizedBox(
+            height: 5,
+          )
         ],
       ),
     );

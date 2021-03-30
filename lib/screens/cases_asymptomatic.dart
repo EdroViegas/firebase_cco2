@@ -10,22 +10,13 @@ import 'package:firebase_cco2/ui/shared/ui_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class Cases extends StatefulWidget {
+class AsymptomaticCases extends StatefulWidget {
   @override
-  _CasesState createState() => _CasesState();
+  _AsymptomaticCasesState createState() => _AsymptomaticCasesState();
 }
 
-class _CasesState extends State<Cases> {
+class _AsymptomaticCasesState extends State<AsymptomaticCases> {
   final ScrollController _scrollController = ScrollController();
-
-  var total = '-';
-
-  setTotal(val) {
-    setState(() {
-      total = val;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,30 +33,31 @@ class _CasesState extends State<Cases> {
       ),
       body: Center(
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('cases').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('cases')
+              .where("symptomatic", isEqualTo: false)
+              .where('isActive', isEqualTo: true)
+              .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) return const CircularProgressIndicator();
-
+            if (!snapshot.hasData) return const SizedBox.shrink();
             int length = snapshot.data.docs.length;
-
             return Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: screenWidth(context),
                   child: CardCaseCategory(
-                      hasStatistic: true,
-                      title: "TOTAL DE CASOS",
-                      value: length,
-                      image: "assets/images/pale-coronavirus.png",
-                      icon: FontAwesomeIcons.viruses,
-                      color: mainColor),
+                    hasStatistic: true,
+                    title: "ASSINTOMÁTICOS ",
+                    value: length,
+                    image: "assets/images/fogg-doctor.png",
+                    icon: FontAwesomeIcons.shieldVirus,
+                    color: secondColor,
+                  ),
                 ),
                 Expanded(
                   child: Container(
                     child: Scrollbar(
-                      controller: _scrollController,
                       isAlwaysShown: true,
                       child: Container(
                         padding:
@@ -79,8 +71,6 @@ class _CasesState extends State<Cases> {
                               docData.putIfAbsent('id', () => id);
 
                               CaseModel caseModel = CaseModel.fromData(docData);
-
-                              //print("ALL ROLES ARE :${roles.toJson()}");
 
                               return CardCase(
                                 caseModel: caseModel,

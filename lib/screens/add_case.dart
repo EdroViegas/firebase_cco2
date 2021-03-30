@@ -219,7 +219,7 @@ class _AddCaseState extends State<AddCase> {
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [
-                        MaskedInputFormatter(' ### ### ###'),
+                        MaskedInputFormatter(' 000 000 000'),
                       ],
                       decoration: InputDecoration(
                         labelText: "Telefone",
@@ -240,7 +240,9 @@ class _AddCaseState extends State<AddCase> {
                       decoration: InputDecoration(
                         labelText: "Telfone Alternativo",
                       ),
-                      inputFormatters: [MaskedInputFormatter(' ### ### ###')],
+                      inputFormatters: [
+                        MaskedInputFormatter(' 000 000 000'),
+                      ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Digite o telefone alternativo';

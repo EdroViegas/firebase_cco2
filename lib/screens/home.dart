@@ -1,9 +1,14 @@
+import 'package:firebase_cco2/cards/card_category.dart';
 import 'package:firebase_cco2/cards/user_card.dart';
 import 'package:firebase_cco2/helpers/dialogues.dart';
 import 'package:firebase_cco2/models/user_model.dart';
 import 'package:firebase_cco2/screens/add_case.dart';
 import 'package:firebase_cco2/screens/cases.dart';
+import 'package:firebase_cco2/screens/cases_asymptomatic.dart';
+import 'package:firebase_cco2/screens/cases_recovered.dart';
+import 'package:firebase_cco2/screens/cases_symptomatic.dart';
 import 'package:firebase_cco2/services/authentication_service.dart';
+import 'package:firebase_cco2/services/firestore_service.dart';
 import 'package:firebase_cco2/services/shared_prefs_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
 
@@ -23,7 +28,9 @@ class _HomeState extends State<Home> {
 
   UserModel userLoad = UserModel();
 
-  loadSharedPrefs() async {
+  FirestoreService _firestoreService = FirestoreService();
+
+  /* loadSharedPrefs() async {
     SharedPref sharedPref = SharedPref();
     try {
       print('\n\n\n');
@@ -39,6 +46,8 @@ class _HomeState extends State<Home> {
     }
   }
 
+  */
+
   @override
   Widget build(BuildContext context) {
     bool isVerified = context.read<AuthenticationService>().isVerifiedUser();
@@ -46,6 +55,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: secondColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Colors.white),
         elevation: 0,
         actions: [
@@ -98,7 +108,7 @@ class _HomeState extends State<Home> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: FutureBuilder(
-                    future: loadSharedPrefs(),
+                    future: _firestoreService.getUserData(),
                     builder: (ctx, snapshot) {
                       // Checking if future is resolved or not
                       if (snapshot.connectionState == ConnectionState.done) {
@@ -158,7 +168,7 @@ class _HomeState extends State<Home> {
                           snaCKbar("Confirme o seu e-mail");
                         }
                       },
-                      child: _cardCases(
+                      child: CardCaseCategory(
                           isVerified: isVerified,
                           title: "CASOS",
                           image: "assets/images/pale-coronavirus.png",
@@ -181,21 +191,63 @@ class _HomeState extends State<Home> {
                           context: context,
                         );
                       },
-                      child: _cardCases(
-                          isVerified: isVerified,
-                          title: "SINTOMÁTICOS",
-                          image: "assets/images/fogg-doctor.png",
-                          icon: FontAwesomeIcons.procedures),
+                      child: InkWell(
+                        onTap: () {
+                          if (isVerified) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    SymptomaticCases()));
+                          } else {
+                            snaCKbar("Confirme o seu e-mail");
+                          }
+                        },
+                        child: CardCaseCategory(
+                            isVerified: isVerified,
+                            title: "SINTOMÁTICOS",
+                            image: "assets/images/fogg-doctor.png",
+                            icon: FontAwesomeIcons.procedures),
+                      ),
                     ),
                     SizedBox(
                       height: 15,
                     ),
-                    _cardCases(
-                        isVerified: isVerified,
-                        title: "ASSINTOMÁTICOS",
-                        image: "assets/images/fogg-pandemic-set.png",
-                        icon: FontAwesomeIcons.shieldVirus,
-                        color: secondColor),
+                    InkWell(
+                      onTap: () {
+                        if (isVerified) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  AsymptomaticCases()));
+                        } else {
+                          snaCKbar("Confirme o seu e-mail");
+                        }
+                      },
+                      child: CardCaseCategory(
+                          isVerified: isVerified,
+                          title: "ASSINTOMÁTICOS",
+                          image: "assets/images/fogg-pandemic-set.png",
+                          icon: FontAwesomeIcons.shieldVirus,
+                          color: secondColor),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (isVerified) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  RecoveredCase()));
+                        } else {
+                          snaCKbar("Confirme o seu e-mail");
+                        }
+                      },
+                      child: CardCaseCategory(
+                          isVerified: isVerified,
+                          title: "RECUPERADOS",
+                          image: "assets/images/fogg-pandemic-set.png",
+                          icon: FontAwesomeIcons.checkCircle,
+                          color: secondColor),
+                    ),
                     SizedBox(
                       height: 90,
                     ),
