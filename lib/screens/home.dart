@@ -9,7 +9,6 @@ import 'package:firebase_cco2/screens/cases_recovered.dart';
 import 'package:firebase_cco2/screens/cases_symptomatic.dart';
 import 'package:firebase_cco2/services/authentication_service.dart';
 import 'package:firebase_cco2/services/firestore_service.dart';
-import 'package:firebase_cco2/services/shared_prefs_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
 
 import 'package:flutter/material.dart';
