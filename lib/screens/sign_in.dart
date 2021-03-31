@@ -1,3 +1,5 @@
+import 'package:firebase_cco2/helpers/dialogues.dart';
+import 'package:firebase_cco2/screens/home.dart';
 import 'package:firebase_cco2/screens/sign_up.dart';
 import 'package:firebase_cco2/services/authentication_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
@@ -19,7 +21,6 @@ class SignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mainColor,
       // appBar: AppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -45,6 +46,7 @@ class SignIn extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
+                          border: Border.all(color: mainColor),
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
                       child: Form(
@@ -99,6 +101,7 @@ class SignIn extends StatelessWidget {
                             TextFormField(
                                 controller: passwordController,
                                 obscureText: true,
+                                keyboardType: TextInputType.emailAddress,
                                 decoration: InputDecoration(
                                   labelText: "Senha",
                                   prefixIcon: Container(
@@ -132,11 +135,25 @@ class SignIn extends StatelessWidget {
                                   if (_formKey.currentState.validate()) {
                                     // If the form is valid, display a snackbar. In the real world,
                                     // you'd often call a server or save the information in a database.
+
+                                    fullScreenProcessingDialog(
+                                        context: context, dismissible: true);
                                     context
                                         .read<AuthenticationService>()
                                         .loginWithEmail(
                                             email: email.trim(),
-                                            password: password.trim());
+                                            password: password.trim())
+                                        .then((value) {
+                                      Navigator.pop(context);
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  Home()));
+                                    }).onError((error, stackTrace) {
+                                      print("ERROR TRYING TO LOGIN : ${error}");
+                                    });
+
+                                    Navigator.pop(context);
                                   }
                                 },
                                 child: Text("Iniciar sessão",

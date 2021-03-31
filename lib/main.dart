@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'helpers/helper.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 //VERIFICAR SE O EMAIL EXIST
 

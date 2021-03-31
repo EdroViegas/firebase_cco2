@@ -7,6 +7,7 @@ import 'package:firebase_cco2/screens/cases.dart';
 import 'package:firebase_cco2/screens/cases_asymptomatic.dart';
 import 'package:firebase_cco2/screens/cases_recovered.dart';
 import 'package:firebase_cco2/screens/cases_symptomatic.dart';
+import 'package:firebase_cco2/screens/sign_in.dart';
 import 'package:firebase_cco2/services/authentication_service.dart';
 import 'package:firebase_cco2/services/firestore_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
@@ -64,6 +65,8 @@ class _HomeState extends State<Home> {
               icon: Icon(Icons.logout),
               onPressed: () {
                 context.read<AuthenticationService>().signOut();
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => SignIn()));
               }),
         ],
       ),

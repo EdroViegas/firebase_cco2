@@ -41,6 +41,7 @@ dependencies:
   flutter_switch: ^0.3.0
   date_time_picker: ^2.0.0
   flutter_multi_formatter: ^2.0.1
+  responsive_framework: ^0.1.0
 
 dev_dependencies:
   flutter_test:
