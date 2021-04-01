@@ -268,13 +268,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  observable_ish:
-    dependency: transitive
-    description:
-      name: observable_ish
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.5"
   path:
     dependency: transitive
     description:
@@ -337,14 +330,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.3.3"
-  provider_architecture:
-    dependency: "direct main"
-    description:
-      name: provider_architecture
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.1+1"
+    version: "5.0.0"
   responsive_framework:
     dependency: "direct main"
     description:
