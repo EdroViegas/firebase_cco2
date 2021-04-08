@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_cco2/models/user_model.dart';
+
 import 'package:firebase_cco2/services/authentication_service.dart';
 import 'package:firebase_cco2/screens/home.dart';
 import 'package:firebase_cco2/screens/sign_in.dart';
-import 'package:firebase_cco2/services/shared_prefs_service.dart';
+
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

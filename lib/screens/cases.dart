@@ -48,18 +48,15 @@ class _CasesState extends State<Cases> {
   @override
   void initState() {
     super.initState();
+    hasHighLevel().then((value) {
+      isHighLevel = value;
+    }).onError((error, stackTrace) {
+      print("Error attempting to get level ${error.toString()}");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    hasHighLevel().then((value) {
-      setState(() {
-        isHighLevel = value;
-      });
-    }).onError((error, stackTrace) {
-      print("Error attempting to get level ${error.toString()}");
-    });
-
     return Scaffold(
       backgroundColor: secondColor,
       appBar: AppBar(

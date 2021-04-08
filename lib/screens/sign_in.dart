@@ -5,7 +5,7 @@ import 'package:firebase_cco2/services/authentication_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
 import 'package:firebase_cco2/ui/shared/ui_helpers.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:provider/provider.dart';
 import 'package:firebase_cco2/helpers/extensions.dart';
 
@@ -46,7 +46,6 @@ class SignIn extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                          border: Border.all(color: mainColor),
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
                       child: Form(
@@ -69,8 +68,7 @@ class SignIn extends StatelessWidget {
                                         color: secondColor, fontSize: 18),
                                   ),
                                   Text("Receba, envie casos e muito mais...",
-                                      style: TextStyle(
-                                          color: mainColor, fontSize: 16))
+                                      style: TextStyle(fontSize: 16))
                                 ],
                               ),
                             ),

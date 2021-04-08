@@ -10,6 +10,7 @@ class SignUp extends StatelessWidget {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController altPhoneController = TextEditingController();
   final TextEditingController userRoleController = TextEditingController();
+  final TextEditingController countyRoleController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +52,12 @@ class SignUp extends StatelessWidget {
                 ),
               ),
               TextField(
+                controller: countyRoleController,
+                decoration: InputDecoration(
+                  labelText: "Municipio",
+                ),
+              ),
+              TextField(
                 controller: userRoleController,
                 decoration: InputDecoration(
                   labelText: "CCO",
@@ -75,7 +82,8 @@ class SignUp extends StatelessWidget {
                       phone: phoneController.text.trim(),
                       altPhone: altPhoneController.text.trim(),
                       userRole: userRoleController.text.trim(),
-                      password: passwordController.text.trim());
+                      password: passwordController.text.trim(),
+                      county: countyRoleController.text.trim());
                 },
                 child: Text("Sign Up"),
               )

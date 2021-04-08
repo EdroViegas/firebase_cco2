@@ -81,6 +81,68 @@ Future<bool> registerSucceedDialogue({
       });
 }
 
+Future<bool> updateSucceedDialogue({
+  message,
+  @required context,
+}) {
+  return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(7.0)),
+          child: Container(
+            color: Colors.transparent,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 2.0, left: 5.0, right: 5.0),
+                child: ListBody(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            size: 25,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        Cases()));
+                          }),
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Container(
+                            child: Icon(
+                          Icons.check_circle_outline_outlined,
+                          size: 70,
+                          color: secondColor,
+                        )),
+                        SizedBox(height: 20),
+                        Container(
+                          child: Text(
+                            "$message",
+                            style: TextStyle(
+                                color: Color(0xff221a80),
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        SizedBox(height: 30)
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      });
+}
+
 Future<bool> registerErrorDialogue({
   hasError = false,
   isProcessing = false,
@@ -110,6 +172,7 @@ Future<bool> registerErrorDialogue({
                             size: 25,
                           ),
                           onPressed: () {
+                            Navigator.of(context).pop();
                             Navigator.of(context).pop();
                           }),
                     ),

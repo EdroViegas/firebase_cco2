@@ -17,20 +17,21 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-class AddCase extends StatefulWidget {
+class UpdateCase extends StatefulWidget {
+  final CaseModel caseModel;
+  final case_id;
+  UpdateCase({this.caseModel, this.case_id});
   @override
-  _AddCaseState createState() => _AddCaseState();
+  _UpdateCaseState createState() => _UpdateCaseState();
 }
 
-class _AddCaseState extends State<AddCase> {
+class _UpdateCaseState extends State<UpdateCase> {
 // Initialize form index and FocusNodes
 
 //Start Form Variables
   bool isActive = true;
   bool isSymptomatic = true;
   var _selectedGenre = 0;
-
-  String _ageType;
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _ageController = TextEditingController();
@@ -67,6 +68,12 @@ class _AddCaseState extends State<AddCase> {
   final _secondFormKey = GlobalKey<FormState>();
   final _thirdFormKey = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    super.initState();
+    initializeData();
+  }
+
 // Dispose FocusNodes when not needed anymore
 
   @override
@@ -101,6 +108,28 @@ class _AddCaseState extends State<AddCase> {
     final n = num.tryParse(value);
 
     return n != null;
+  }
+
+  initializeData() {
+    CaseModel caseModel = widget.caseModel;
+
+    //Inputs
+    _nameController.text = caseModel.name;
+    _ageController.text = caseModel.age;
+    _phoneController.text = caseModel.phone;
+    _altPhoneController.text = caseModel.altPhone;
+    _provinceController.text = caseModel.address.city;
+    _countyController.text = caseModel.address.county;
+    _streetController.text = caseModel.address.street;
+    _referenceController.text = caseModel.address.reference;
+    _isolationPlaceController.text = caseModel.isolationPlace;
+
+    //state
+
+    isActive = caseModel.isActive;
+    isSymptomatic = caseModel.symptomatic;
+    _selectedGenre = caseModel.genre == "Masculino" ? 1 : 2;
+    activeSince = caseModel.activeSince.toDate();
   }
 
   @override
@@ -198,68 +227,24 @@ class _AddCaseState extends State<AddCase> {
                           value: 2),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          width: 150,
-                          child: TextFormField(
-                            controller: _ageController,
-                            decoration: InputDecoration(
-                              labelText: "Idade",
-                            ),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9]')),
-                            ],
-                            validator: (value) {
-                              if (value == null ||
-                                  value.isEmpty ||
-                                  !isNumber(value)) {
-                                return 'Digite a idade';
-                              }
-
-                              if (_ageType == null) {
-                                return 'Especifique a idade ( Anos / Mês )';
-                              }
-
-                              int age = num.tryParse(value);
-
-                              if (age > 12 && _ageType == "Meses") {
-                                return 'Considere anos, ao passar 12 meses';
-                              }
-
-                              final n = num.tryParse(value);
-                              if (n >= 140) return "Idade inválida";
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 20),
-                        child: DropdownButton(
-                          isDense: false,
-                          hint: Text("Idade em.."),
-                          value: _ageType,
-                          items: [
-                            DropdownMenuItem(
-                              child: Text("Ano(s)"),
-                              value: "Anos",
-                            ),
-                            DropdownMenuItem(
-                                child: Text("Meses"), value: "Meses")
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              _ageType = value;
-                            });
-                          },
-                        ),
-                      )
+                  TextFormField(
+                    controller: _ageController,
+                    decoration: InputDecoration(
+                      labelText: "Idade",
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                     ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty || !isNumber(value)) {
+                        return 'Digite a idade';
+                      }
+
+                      final n = num.tryParse(value);
+                      if (n >= 140) return "Idade inválida";
+                      return null;
+                    },
                   ),
                   TextFormField(
                       controller: _phoneController,
@@ -611,7 +596,7 @@ class _AddCaseState extends State<AddCase> {
                   DateTimePicker(
                     type: DateTimePickerType.dateTimeSeparate,
                     dateMask: 'd MMM, yyyy',
-                    initialValue: DateTime.now().toString(),
+                    initialValue: activeSince.toString(),
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2100),
                     icon: Icon(Icons.event),
@@ -714,36 +699,37 @@ class _AddCaseState extends State<AddCase> {
                                 receiverRole: receiverRole);
 
                             CaseModel caseModel = CaseModel(
-                                name: name,
-                                age: age,
-                                genre: genre,
-                                address: address,
-                                isActive: isActive,
-                                activeSince: timeStamp,
-                                isolationPlace: isolationPlace,
-                                phone: phone,
-                                altPhone: altPhone,
-                                caseRole: role,
-                                symptomatic: isSymptomatic,
-                                followedby: user,
-                                ageType: _ageType);
+                              name: name,
+                              age: age,
+                              genre: genre,
+                              address: address,
+                              isActive: isActive,
+                              activeSince: timeStamp,
+                              isolationPlace: isolationPlace,
+                              phone: phone,
+                              altPhone: altPhone,
+                              caseRole: role,
+                              symptomatic: isSymptomatic,
+                              followedby: user,
+                            );
+
+                            fullScreenProcessingDialog(
+                                context: context, dismissible: false);
 
                             if (_thirdFormKey.currentState.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
-                              //
 
-                              fullScreenProcessingDialog(
-                                  context: context, dismissible: false);
-
-                              FirestoreService _firestoreService =
+                              FirestoreService _cloudFirestore =
                                   FirestoreService();
-                              _firestoreService.createCase(caseModel).then((_) {
+                              _cloudFirestore
+                                  .updateCase(caseModel, widget.case_id)
+                                  .then((data) {
                                 Navigator.pop(context);
 
-                                registerSucceedDialogue(
+                                updateSucceedDialogue(
                                   context: context,
-                                  message: 'Registro efectuado com sucesso!',
+                                  message: 'Registro Actualizado com sucesso!',
                                 );
                               }).catchError((error) {
                                 print("ERROR WHILE WRITING DOCUMENT: $error");
@@ -753,14 +739,14 @@ class _AddCaseState extends State<AddCase> {
                                   isProcessing: false,
                                   isWarning: false,
                                   message:
-                                      'Não foi possível efectuar o registro!',
+                                      'Não foi possível efectuar a actualização!',
                                   context: context,
                                 );
                               });
                             }
                           },
                           child: Text(
-                            "Salvar",
+                            "Atualizar",
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.white,

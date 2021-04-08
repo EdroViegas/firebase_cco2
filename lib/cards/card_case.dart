@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_cco2/helpers/dialogues.dart';
 import 'package:firebase_cco2/models/case_model.dart';
+import 'package:firebase_cco2/screens/update_case.dart';
 import 'package:firebase_cco2/services/firestore_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +91,7 @@ class CardCase extends StatelessWidget {
                             SizedBox(
                               width: 10,
                             ),
-                            Text("${caseModel.age}",
+                            Text("${caseModel.age} ${caseModel.ageType}",
                                 style: TextStyle(fontWeight: FontWeight.bold))
                           ],
                         ),
@@ -248,6 +249,15 @@ class CardCase extends StatelessWidget {
               ],
             ),
           ),
+          IconButton(
+              icon: Icon(FontAwesomeIcons.upload),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => UpdateCase(
+                          caseModel: caseModel,
+                          case_id: caseModel.id,
+                        )));
+              })
         ],
       ),
     );
@@ -275,12 +285,12 @@ class CardCase extends StatelessWidget {
               onPressed: () {
                 _firestoreService
                     .changeCaseState(
-                        id: caseModel.id,
-                        state: 'isActive',
-                        value: !caseModel.isActive)
-                    .then((value) {
-                  Navigator.of(context).pop();
-                }).onError((error, stackTrace) {
+                      id: caseModel.id,
+                      state: 'isActive',
+                      value: !caseModel.isActive,
+                    )
+                    .then((value) {})
+                    .onError((error, stackTrace) {
                   print("ERROR WHILE UPDATING CASE $error");
                   registerErrorDialogue(
                     hasError: false,
@@ -290,6 +300,7 @@ class CardCase extends StatelessWidget {
                     context: context,
                   );
                 });
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
@@ -328,9 +339,8 @@ class CardCase extends StatelessWidget {
                         id: caseModel.id,
                         state: 'symptomatic',
                         value: !caseModel.symptomatic)
-                    .then((value) {
-                  Navigator.of(context).pop();
-                }).onError((error, stackTrace) {
+                    .then((value) {})
+                    .onError((error, stackTrace) {
                   print("ERROR WHILE UPDATING CASE $error");
                   registerErrorDialogue(
                     hasError: false,
@@ -340,6 +350,7 @@ class CardCase extends StatelessWidget {
                     context: context,
                   );
                 });
+                Navigator.of(context).pop();
               },
             ),
             TextButton(

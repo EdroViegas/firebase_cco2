@@ -20,6 +20,8 @@ class CaseModel {
   final CaseRole caseRole;
   final GeoPoint geolocation;
   final UserModel followedby;
+  final String ageType;
+  final Timestamp recoveryDate;
 
   CaseModel(
       {this.id,
@@ -35,7 +37,9 @@ class CaseModel {
       this.geolocation,
       this.isActive,
       this.symptomatic,
-      this.followedby});
+      this.followedby,
+      this.ageType,
+      this.recoveryDate});
 
   CaseModel.fromData(Map<String, dynamic> data)
       : id = data['id'] ?? "",
@@ -51,7 +55,9 @@ class CaseModel {
         geolocation = data['geolocation'],
         isActive = data['isActive'],
         symptomatic = data['symptomatic'],
-        followedby = UserModel.fromData(data['followedby']) ?? {};
+        followedby = UserModel.fromData(data['followedby']) ?? {},
+        ageType = data['ageType'] ?? "",
+        recoveryDate = data['recoveryDate'] as Timestamp;
 
   Map<String, dynamic> toJson() {
     return {
@@ -66,7 +72,9 @@ class CaseModel {
       'alt_phone': altPhone,
       'symptomatic': symptomatic,
       'role': caseRole.toJson(),
-      'followedby': followedby.toJson()
+      'followedby': followedby.toJson(),
+      'ageType': ageType,
+      'recoveryDate': recoveryDate,
     };
   }
 }

@@ -12,6 +12,7 @@ class FirestoreService {
       FirebaseFirestore.instance.collection('cases');
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  CollectionReference cases = FirebaseFirestore.instance.collection('cases');
 
   Future createUser(UserModel user) async {
     try {
@@ -28,7 +29,7 @@ class FirestoreService {
 
   Future createCase(CaseModel caso) async {
     try {
-      var data = await _casesCollectionReference.doc().set(caso.toJson());
+      var data = await _casesCollectionReference.add(caso.toJson());
       return data;
     } catch (e) {
       // TODO: Find or create a way to repeat error handling without so much repeated code
@@ -40,14 +41,41 @@ class FirestoreService {
     }
   }
 
-  Future changeCaseState({
-    String id,
-    String state,
-    bool value,
-  }) async {
+  Future<void> updateCase(CaseModel caseModel, case_id) {
+    print("DATA FOUND IN VARIABLE IS :${case_id} ");
+    return cases.doc(case_id).update(caseModel.toJson())
+      ..then((value) => print("Case Updated"))
+          .catchError((error) => print("Failed to update case: $error"));
+    ;
+  }
+
+  Future update(CaseModel caso) async {
     try {
-      var data = await _casesCollectionReference.doc(id).update({state: value});
-      return data;
+      await _casesCollectionReference.doc(caso.id).update(caso.toJson());
+
+      print("DATA FOUND IN VARIABLE IS :${caso.toJson()} ");
+    } catch (e) {
+      // TODO: Find or create a way to repeat error handling without so much repeated code
+      if (e is PlatformException) {
+        return e.message;
+      }
+
+      return e.toString();
+    }
+  }
+
+  Future changeCaseState({String id, String state, bool value}) async {
+    Timestamp recoveryDate = Timestamp.fromDate(DateTime.now());
+
+    try {
+      if (!value) {
+        var data = await _casesCollectionReference
+            .doc(id)
+            .update({state: value, 'recoveryDate': recoveryDate});
+      } else {
+        var data =
+            await _casesCollectionReference.doc(id).update({state: value});
+      }
     } catch (e) {
       // TODO: Find or create a way to repeat error handling without so much repeated code
       if (e is PlatformException) {
