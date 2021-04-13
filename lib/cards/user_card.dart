@@ -22,7 +22,7 @@ class _UserCardState extends State<UserCard> {
     if (widget.altPhone != "") phoneNumber += " | " + widget.altPhone;
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
-      height: 350,
+      height: 400,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -82,7 +82,7 @@ class _UserCardState extends State<UserCard> {
             ),
           ),
           SizedBox(
-            height: 5,
+            height: 10,
           )
         ],
       ),

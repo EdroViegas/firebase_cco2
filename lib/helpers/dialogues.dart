@@ -1,7 +1,11 @@
+import 'package:firebase_cco2/models/case_model.dart';
 import 'package:firebase_cco2/screens/add_case.dart';
 import 'package:firebase_cco2/screens/cases.dart';
+import 'package:firebase_cco2/services/firestore_service.dart';
 import 'package:firebase_cco2/ui/shared/app_colors.dart';
 import 'package:flutter/material.dart';
+
+//FirestoreService _firestoreService = FirestoreService();
 
 Future<bool> registerSucceedDialogue({
   message,

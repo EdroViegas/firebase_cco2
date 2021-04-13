@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_cco2/cards/card_case.dart';
 import 'package:firebase_cco2/cards/card_category.dart';
+import 'package:firebase_cco2/helpers/functions.dart';
 import 'package:firebase_cco2/models/case_model.dart';
 import 'package:firebase_cco2/models/user_model.dart';
 import 'package:firebase_cco2/screens/home.dart';
@@ -33,18 +34,6 @@ class _CasesState extends State<Cases> {
     });
   }
 
-  getCurrentUser() {
-    _currentUser = _firebaseAuth.currentUser;
-  }
-
-  Future<bool> hasHighLevel() async {
-    List<String> roles = ['CENTRAL', 'MUNICIPAL'];
-    getCurrentUser();
-    UserModel user = await _firestoreService.getUser(_currentUser.uid);
-
-    return roles.contains(user.userRole);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -53,6 +42,7 @@ class _CasesState extends State<Cases> {
     }).onError((error, stackTrace) {
       print("Error attempting to get level ${error.toString()}");
     });
+    _currentUser = _firebaseAuth.currentUser;
   }
 
   @override
